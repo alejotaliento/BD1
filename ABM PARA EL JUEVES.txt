@@ -1,0 +1,7 @@
+ABM:
+Pedido
+Concesionaria	
+detalle_pedido (tabla intermedia)
+proveedores
+insumos
+proveedores_insumo (tabla intermedia)
