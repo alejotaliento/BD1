@@ -43,14 +43,14 @@ update proveedor set nombre=nombre,cuit=cuit where idProveedor=id;
 
 
 -- PROCEDURES INSUMOS
-create procedure insumo_alta(id int, descripcion varchar(45),codigo int)
-insert into insumo values(id,descripcion,codigo);
+create procedure insumo_alta(id int, descripcion varchar(45))
+insert into insumo values(id,descripcion);
 
 create procedure insumo_baja(id int)
 delete from insumo where idInsumo=id;
 
-create procedure insumo_modificacion(id int, descripcion varchar(45),codigo int)
-update insumo set descripcion=descripcion,codigo=codigo where idInsumo=id;
+create procedure insumo_modificacion(id int, descripcion varchar(45))
+update insumo set descripcion=descripcion where idInsumo=id;
 
 
 -- PROCEDURES PROVEEDOR_INSUMO

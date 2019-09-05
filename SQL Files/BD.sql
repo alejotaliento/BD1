@@ -2,7 +2,7 @@
 
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
-SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
 -- -----------------------------------------------------
 -- Schema tpbd1
@@ -25,6 +25,8 @@ CREATE TABLE IF NOT EXISTS `tpbd1`.`concesionaria` (
   `nombre` VARCHAR(45) NOT NULL,
   `cuit` INT(11) NOT NULL,
   `ventas` INT(11) NOT NULL,
+  `eliminado` BIT NOT NULL,
+  `fechaEliminado` DATETIME NULL,
   PRIMARY KEY (`idConcesionaria`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
@@ -38,8 +40,10 @@ DROP TABLE IF EXISTS `tpbd1`.`montaje` ;
 CREATE TABLE IF NOT EXISTS `tpbd1`.`montaje` (
   `idMontaje` INT(11) NOT NULL,
   `idModelo` INT(11) NOT NULL,
+  `eliminado` BIT NOT NULL,
+  `fechaEliminado` DATETIME NULL,
   PRIMARY KEY (`idMontaje`),
-  INDEX `fk_montaje_modelo1_idx` (`idModelo` ASC) VISIBLE)
+  INDEX `fk_montaje_modelo1_idx` (`idModelo` ASC))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
@@ -54,8 +58,10 @@ CREATE TABLE IF NOT EXISTS `tpbd1`.`estacion` (
   `tarea` VARCHAR(45) NOT NULL,
   `idMontaje` INT(11) NOT NULL,
   `orden` INT(11) NULL DEFAULT NULL,
+  `eliminado` BIT NOT NULL,
+  `fechaEliminado` DATETIME NULL,
   PRIMARY KEY (`idEstacion`),
-  INDEX `fk_estacion_montaje1_idx` (`idMontaje` ASC) VISIBLE,
+  INDEX `fk_estacion_montaje1_idx` (`idMontaje` ASC),
   CONSTRAINT `fk_estacion_montaje1`
     FOREIGN KEY (`idMontaje`)
     REFERENCES `tpbd1`.`montaje` (`idMontaje`))
@@ -71,6 +77,8 @@ DROP TABLE IF EXISTS `tpbd1`.`modelo` ;
 CREATE TABLE IF NOT EXISTS `tpbd1`.`modelo` (
   `idModelo` INT(11) NOT NULL,
   `nombre` VARCHAR(45) NOT NULL,
+  `eliminado` BIT NOT NULL,
+  `fechaEliminado` DATETIME NULL,
   PRIMARY KEY (`idModelo`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
@@ -85,8 +93,10 @@ CREATE TABLE IF NOT EXISTS `tpbd1`.`vehiculo` (
   `idVehiculo` INT(11) NOT NULL,
   `numeroChasis` VARCHAR(45) NOT NULL,
   `modelo_idModelo` INT(11) NOT NULL,
+  `eliminado` BIT NOT NULL,
+  `fechaEliminado` DATETIME NULL,
   PRIMARY KEY (`idVehiculo`),
-  INDEX `fk_vehiculo_modelo1_idx` (`modelo_idModelo` ASC) VISIBLE,
+  INDEX `fk_vehiculo_modelo1_idx` (`modelo_idModelo` ASC),
   CONSTRAINT `fk_vehiculo_modelo1`
     FOREIGN KEY (`modelo_idModelo`)
     REFERENCES `tpbd1`.`modelo` (`idModelo`))
@@ -104,8 +114,10 @@ CREATE TABLE IF NOT EXISTS `tpbd1`.`estacion_x_vehiculo` (
   `fecha_egreso` DATETIME NOT NULL,
   `idEstacion` INT(11) NOT NULL,
   `idVehiculo` INT(11) NOT NULL,
-  INDEX `fk_estacion_x_vehiculo_estacion1_idx` (`idEstacion` ASC) VISIBLE,
-  INDEX `fk_estacion_x_vehiculo_vehiculo1_idx` (`idVehiculo` ASC) VISIBLE,
+  `eliminado` BIT NOT NULL,
+  `fechaEliminado` DATETIME NULL,
+  INDEX `fk_estacion_x_vehiculo_estacion1_idx` (`idEstacion` ASC),
+  INDEX `fk_estacion_x_vehiculo_vehiculo1_idx` (`idVehiculo` ASC),
   CONSTRAINT `fk_estacion_x_vehiculo_estacion1`
     FOREIGN KEY (`idEstacion`)
     REFERENCES `tpbd1`.`estacion` (`idEstacion`),
@@ -124,7 +136,8 @@ DROP TABLE IF EXISTS `tpbd1`.`insumo` ;
 CREATE TABLE IF NOT EXISTS `tpbd1`.`insumo` (
   `idInsumo` INT(11) NOT NULL AUTO_INCREMENT,
   `descripcion` VARCHAR(45) NOT NULL,
-  `codigo` INT(11) NOT NULL,
+  `eliminado` BIT NOT NULL,
+  `fechaEliminado` DATETIME NULL,
   PRIMARY KEY (`idInsumo`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
@@ -137,15 +150,17 @@ DROP TABLE IF EXISTS `tpbd1`.`insumo_x_estacion` ;
 
 CREATE TABLE IF NOT EXISTS `tpbd1`.`insumo_x_estacion` (
   `idEstacion` INT(11) NOT NULL,
-  `insumo_codigo` INT(11) NOT NULL,
+  `idInsumo` INT(11) NOT NULL,
   `cantidad` INT(11) NOT NULL,
-  INDEX `fk_insumo_x_estacion_estacion1_idx` (`idEstacion` ASC) VISIBLE,
-  INDEX `fk_insumo_x_estacion_insumo1_idx` (`insumo_codigo` ASC) VISIBLE,
+  `eliminado` BIT NOT NULL,
+  `fechaEliminado` DATETIME NULL,
+  INDEX `fk_insumo_x_estacion_estacion1_idx` (`idEstacion` ASC),
+  INDEX `fk_insumo_x_estacion_insumo1_idx` (`idInsumo` ASC),
   CONSTRAINT `fk_insumo_x_estacion_estacion1`
     FOREIGN KEY (`idEstacion`)
     REFERENCES `tpbd1`.`estacion` (`idEstacion`),
   CONSTRAINT `fk_insumo_x_estacion_insumo1`
-    FOREIGN KEY (`insumo_codigo`)
+    FOREIGN KEY (`idInsumo`)
     REFERENCES `tpbd1`.`insumo` (`idInsumo`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
@@ -160,6 +175,8 @@ CREATE TABLE IF NOT EXISTS `tpbd1`.`proveedor` (
   `idProveedor` INT(11) NOT NULL,
   `nombre` VARCHAR(45) NOT NULL,
   `cuit` INT(11) NOT NULL,
+  `eliminado` BIT NOT NULL,
+  `fechaEliminado` DATETIME NULL,
   PRIMARY KEY (`idProveedor`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
@@ -174,8 +191,10 @@ CREATE TABLE IF NOT EXISTS `tpbd1`.`insumo_x_proveedor` (
   `insumo_codigo` INT(11) NOT NULL,
   `idProveedor` INT(11) NOT NULL,
   `precio_insumo` DOUBLE NOT NULL,
-  INDEX `fk_insumo_x_proveedor_insumo1_idx` (`insumo_codigo` ASC) VISIBLE,
-  INDEX `fk_insumo_x_proveedor_proveedor1_idx` (`idProveedor` ASC) VISIBLE,
+  `eliminado` BIT NOT NULL,
+  `fechaEliminado` DATETIME NULL,
+  INDEX `fk_insumo_x_proveedor_insumo1_idx` (`insumo_codigo` ASC),
+  INDEX `fk_insumo_x_proveedor_proveedor1_idx` (`idProveedor` ASC),
   CONSTRAINT `fk_insumo_x_proveedor_insumo1`
     FOREIGN KEY (`insumo_codigo`)
     REFERENCES `tpbd1`.`insumo` (`idInsumo`),
@@ -195,8 +214,11 @@ CREATE TABLE IF NOT EXISTS `tpbd1`.`pedido` (
   `idPedido` INT(11) NOT NULL,
   `idConcesionaria` INT(11) NOT NULL,
   `cantidad` VARCHAR(45) NOT NULL,
+  `fecha` DATETIME NOT NULL,
+  `eliminado` BIT NOT NULL,
+  `fechaEliminado` DATETIME NULL,
   PRIMARY KEY (`idPedido`),
-  INDEX `fk_pedido_concesionaria1_idx` (`idConcesionaria` ASC) VISIBLE,
+  INDEX `fk_pedido_concesionaria1_idx` (`idConcesionaria` ASC),
   CONSTRAINT `fk_pedido_concesionaria1`
     FOREIGN KEY (`idConcesionaria`)
     REFERENCES `tpbd1`.`concesionaria` (`idConcesionaria`))
@@ -212,9 +234,11 @@ DROP TABLE IF EXISTS `tpbd1`.`detalle_pedido` ;
 CREATE TABLE IF NOT EXISTS `tpbd1`.`detalle_pedido` (
   `idPedido` INT(11) NOT NULL,
   `idModelo` INT(11) NOT NULL,
+  `eliminado` BIT NOT NULL,
+  `fechaEliminado` DATETIME NULL,
   PRIMARY KEY (`idPedido`, `idModelo`),
-  INDEX `fk_pedido_has_modelo_modelo1_idx` (`idModelo` ASC) VISIBLE,
-  INDEX `fk_pedido_has_modelo_pedido1_idx` (`idPedido` ASC) VISIBLE,
+  INDEX `fk_pedido_has_modelo_modelo1_idx` (`idModelo` ASC),
+  INDEX `fk_pedido_has_modelo_pedido1_idx` (`idPedido` ASC),
   CONSTRAINT `fk_pedido_has_modelo_modelo1`
     FOREIGN KEY (`idModelo`)
     REFERENCES `tpbd1`.`modelo` (`idModelo`),
@@ -223,6 +247,7 @@ CREATE TABLE IF NOT EXISTS `tpbd1`.`detalle_pedido` (
     REFERENCES `tpbd1`.`pedido` (`idPedido`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
+
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
