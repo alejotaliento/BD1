@@ -31,19 +31,6 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `tpbd1`.`detalle_pedido`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `tpbd1`.`detalle_pedido` ;
-
-CREATE TABLE IF NOT EXISTS `tpbd1`.`detalle_pedido` (
-  `idDetalle` INT(11) NOT NULL,
-  `fecha` DATETIME NULL DEFAULT NULL,
-  PRIMARY KEY (`idDetalle`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
 -- Table `tpbd1`.`montaje`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `tpbd1`.`montaje` ;
@@ -83,7 +70,7 @@ DROP TABLE IF EXISTS `tpbd1`.`modelo` ;
 
 CREATE TABLE IF NOT EXISTS `tpbd1`.`modelo` (
   `idModelo` INT(11) NOT NULL,
-  `nombre` VARCHAR(45) NULL DEFAULT NULL,
+  `nombre` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`idModelo`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
@@ -96,7 +83,7 @@ DROP TABLE IF EXISTS `tpbd1`.`vehiculo` ;
 
 CREATE TABLE IF NOT EXISTS `tpbd1`.`vehiculo` (
   `idVehiculo` INT(11) NOT NULL,
-  `numeroChasis` VARCHAR(45) NULL DEFAULT NULL,
+  `numeroChasis` VARCHAR(45) NOT NULL,
   `modelo_idModelo` INT(11) NOT NULL,
   PRIMARY KEY (`idVehiculo`),
   INDEX `fk_vehiculo_modelo1_idx` (`modelo_idModelo` ASC) VISIBLE,
@@ -185,15 +172,15 @@ DROP TABLE IF EXISTS `tpbd1`.`insumo_x_proveedor` ;
 
 CREATE TABLE IF NOT EXISTS `tpbd1`.`insumo_x_proveedor` (
   `insumo_codigo` INT(11) NOT NULL,
-  `proveedor_idproveedor` INT(11) NOT NULL,
-  `precio_insumo` DOUBLE NULL DEFAULT NULL,
+  `idProveedor` INT(11) NOT NULL,
+  `precio_insumo` DOUBLE NOT NULL,
   INDEX `fk_insumo_x_proveedor_insumo1_idx` (`insumo_codigo` ASC) VISIBLE,
-  INDEX `fk_insumo_x_proveedor_proveedor1_idx` (`proveedor_idproveedor` ASC) VISIBLE,
+  INDEX `fk_insumo_x_proveedor_proveedor1_idx` (`idProveedor` ASC) VISIBLE,
   CONSTRAINT `fk_insumo_x_proveedor_insumo1`
     FOREIGN KEY (`insumo_codigo`)
     REFERENCES `tpbd1`.`insumo` (`idInsumo`),
   CONSTRAINT `fk_insumo_x_proveedor_proveedor1`
-    FOREIGN KEY (`proveedor_idproveedor`)
+    FOREIGN KEY (`idProveedor`)
     REFERENCES `tpbd1`.`proveedor` (`idProveedor`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
@@ -206,37 +193,36 @@ DROP TABLE IF EXISTS `tpbd1`.`pedido` ;
 
 CREATE TABLE IF NOT EXISTS `tpbd1`.`pedido` (
   `idPedido` INT(11) NOT NULL,
-  `cantidad` VARCHAR(45) NULL DEFAULT NULL,
-  `concesionaria_idConcesionaria` INT(11) NOT NULL,
+  `idConcesionaria` INT(11) NOT NULL,
+  `cantidad` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`idPedido`),
-  INDEX `fk_pedido_concesionaria1_idx` (`concesionaria_idConcesionaria` ASC) VISIBLE,
+  INDEX `fk_pedido_concesionaria1_idx` (`idConcesionaria` ASC) VISIBLE,
   CONSTRAINT `fk_pedido_concesionaria1`
-    FOREIGN KEY (`concesionaria_idConcesionaria`)
+    FOREIGN KEY (`idConcesionaria`)
     REFERENCES `tpbd1`.`concesionaria` (`idConcesionaria`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `tpbd1`.`pedido_has_modelo`
+-- Table `tpbd1`.`detalle_pedido`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `tpbd1`.`pedido_has_modelo` ;
+DROP TABLE IF EXISTS `tpbd1`.`detalle_pedido` ;
 
-CREATE TABLE IF NOT EXISTS `tpbd1`.`pedido_has_modelo` (
-  `pedido_idPedido` INT(11) NOT NULL,
-  `modelo_idModelo` INT(11) NOT NULL,
-  PRIMARY KEY (`pedido_idPedido`, `modelo_idModelo`),
-  INDEX `fk_pedido_has_modelo_modelo1_idx` (`modelo_idModelo` ASC) VISIBLE,
-  INDEX `fk_pedido_has_modelo_pedido1_idx` (`pedido_idPedido` ASC) VISIBLE,
+CREATE TABLE IF NOT EXISTS `tpbd1`.`detalle_pedido` (
+  `idPedido` INT(11) NOT NULL,
+  `idModelo` INT(11) NOT NULL,
+  PRIMARY KEY (`idPedido`, `idModelo`),
+  INDEX `fk_pedido_has_modelo_modelo1_idx` (`idModelo` ASC) VISIBLE,
+  INDEX `fk_pedido_has_modelo_pedido1_idx` (`idPedido` ASC) VISIBLE,
   CONSTRAINT `fk_pedido_has_modelo_modelo1`
-    FOREIGN KEY (`modelo_idModelo`)
+    FOREIGN KEY (`idModelo`)
     REFERENCES `tpbd1`.`modelo` (`idModelo`),
   CONSTRAINT `fk_pedido_has_modelo_pedido1`
-    FOREIGN KEY (`pedido_idPedido`)
+    FOREIGN KEY (`idPedido`)
     REFERENCES `tpbd1`.`pedido` (`idPedido`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
-
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
