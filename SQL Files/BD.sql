@@ -188,15 +188,15 @@ DEFAULT CHARACTER SET = utf8;
 DROP TABLE IF EXISTS `tpbd1`.`insumo_x_proveedor` ;
 
 CREATE TABLE IF NOT EXISTS `tpbd1`.`insumo_x_proveedor` (
-  `insumo_codigo` INT(11) NOT NULL,
+  `idInsumo` INT(11) NOT NULL,
   `idProveedor` INT(11) NOT NULL,
-  `precio_insumo` DOUBLE NOT NULL,
+  `precio` DOUBLE NOT NULL,
   `eliminado` BIT NOT NULL,
   `fechaEliminado` DATETIME NULL,
-  INDEX `fk_insumo_x_proveedor_insumo1_idx` (`insumo_codigo` ASC),
+  INDEX `fk_insumo_x_proveedor_insumo1_idx` (`idInsumo` ASC),
   INDEX `fk_insumo_x_proveedor_proveedor1_idx` (`idProveedor` ASC),
   CONSTRAINT `fk_insumo_x_proveedor_insumo1`
-    FOREIGN KEY (`insumo_codigo`)
+    FOREIGN KEY (`idInsumo`)
     REFERENCES `tpbd1`.`insumo` (`idInsumo`),
   CONSTRAINT `fk_insumo_x_proveedor_proveedor1`
     FOREIGN KEY (`idProveedor`)
@@ -247,6 +247,8 @@ CREATE TABLE IF NOT EXISTS `tpbd1`.`detalle_pedido` (
     REFERENCES `tpbd1`.`pedido` (`idPedido`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
+
+
 
 
 SET SQL_MODE=@OLD_SQL_MODE;
