@@ -62,8 +62,9 @@ DECLARE c2 CURSOR FOR SELECT idMontaje FROM estacion;
         
         WHILE idEstacionContador < 5 DO
         
-        IF idMontajeProcedure = idModeloParametro THEN
+        IF idEstacionContador = idModeloParametro THEN
         
+        SET idMontajeProcedure=idModeloParametro;
         INSERT INTO estacion_x_vehiculo (fecha_ingreso,idEstacion,idVehiculo,eliminado) values (now(),idMontajeProcedure,idVehiculoProcedure,0);
         LEAVE getEstacion;
 		
