@@ -34,6 +34,4 @@ DECLARE CONTINUE HANDLER
             
             return numero;
 
-
-
 END $$
